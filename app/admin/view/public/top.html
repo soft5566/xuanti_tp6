@@ -1,0 +1,13 @@
+<div class="layui-logo" style="margin-left: 118px; font-size: 18px; text-align: left; width: 600px;">
+    {$datacfg[4]['con_value']}选题系统后台管理页面
+</div>
+<ul class="layui-nav layui-layout-right">
+    <li class="layui-nav-item">
+        <a href="javascript:;">
+            <img src="/static/images/admin.jpg" class="layui-nav-img">
+            {:session('uloginName')}
+        </a>
+    </li>
+    <li class="layui-nav-item"><a id="logout" href="javascript:void(0);"
+                                  onclick="logout('{:url(\'/admin/manager/logout\')}');return false;">退了</a></li>
+</ul>

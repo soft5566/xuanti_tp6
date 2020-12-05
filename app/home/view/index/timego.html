@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-CN">
+    <meta charset="utf-8">
+    <title>{$datacfg[4]['con_value']}选题系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>{$datacfg[4]['con_value']}选题系统学生登陆页面<a
+                        href="{:url('/index/inst')}" target="_blank"
+                        class="layui-btn layui-btn-danger layui-btn-radius layui-btn-xs">选题操作说明</a></legend>
+            </fieldset>
+
+            <blockquote class="layui-elem-quote" style="margin-top: 10px;">
+                <div id="test2">
+                    选题时间
+                    <div class="layui-inline">
+                        <input type="text" class="layui-input" id="test3" size="16" readonly value="{$starttime}">
+                    </div>
+                    ～
+                    <div class="layui-inline">
+                        <input type="text" class="layui-input" id="test4" size="16" readonly value="{$endtime}">
+                    </div>
+                </div>
+            </blockquote>
+        </div>
+    </div>
+
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+        <legend style="text-align: center">
+            {eq name="enddatetime" value="选题结束，系统已关闭！"}
+                <span style="font-size: 3em; height: 280px; line-height: 280px; text-align: center;"
+                      class="layui-btn layui-btn-warm">
+                    <b>{$enddatetime}</b>
+                </span>
+            {else/}
+                <span style="font-size: 3em; height: 280px; line-height: 130px; text-align: center;"
+                      class="layui-btn layui-btn-warm">
+                    <b>{$startdatetime}</b>
+                    <div id="timer"></div>
+                </span>
+            <script type="text/javascript">
+                var time_now_server, time_now_client, time_end, time_server_client, timerID;
+
+                time_end = new Date("{$starttime}" + ":00");//结束的时间
+                time_end = time_end.getTime();
+
+                var dateTime = new Date();
+                var hh = dateTime.getHours();
+                var mm = dateTime.getMinutes();
+                var ss = dateTime.getSeconds();
+
+                var yy = dateTime.getFullYear();
+                var MM = dateTime.getMonth() + 1;  //因为1月这个方法返回为0，所以加1
+                var dd = dateTime.getDate();
+
+                time_now_server = new Date(yy + "/" + MM + "/" + dd + " " + hh + ":" + mm + ":" + ss);//开始的时间
+                time_now_server = time_now_server.getTime();
+
+                time_now_client = new Date();
+                time_now_client = time_now_client.getTime();
+
+                time_server_client = time_now_server - time_now_client;
+
+                setTimeout("show_time()", 500);
+
+                function show_time() {
+                    var timer = document.getElementById("timer");
+                    if (!timer) {
+                        return;
+                    }
+                    timer.innerHTML = time_server_client;
+
+                    var time_now, time_distance, str_time;
+                    var int_day, int_hour, int_minute, int_second;
+                    var time_now = new Date();
+                    time_now = time_now.getTime() + time_server_client;
+                    time_distance = time_end - time_now;
+                    if (time_distance > 0) {
+                        int_day = Math.floor(time_distance / 86400000)
+                        time_distance -= int_day * 86400000;
+                        int_hour = Math.floor(time_distance / 3600000)
+                        time_distance -= int_hour * 3600000;
+                        int_minute = Math.floor(time_distance / 60000)
+                        time_distance -= int_minute * 60000;
+                        int_second = Math.floor(time_distance / 1000)
+
+                        if (int_hour < 10)
+                            int_hour = "0" + int_hour;
+                        if (int_minute < 10)
+                            int_minute = "0" + int_minute;
+                        if (int_second < 10)
+                            int_second = "0" + int_second;
+                        str_time = int_day + "天" + int_hour + "小时" + int_minute + "分钟" + int_second + "秒";
+                        timer.innerHTML = str_time;
+                        setTimeout("show_time()", 1000);
+                    }
+                    else {
+                        timer.innerHTML = "";
+                        window.location.reload();
+                        clearTimeout(timerID);
+                    }
+                }
+            </script>
+            {/eq}
+        </legend>
+    </fieldset>
+</div>
+
+</body>
+</html>

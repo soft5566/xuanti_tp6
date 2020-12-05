@@ -1,0 +1,29 @@
+<ul class="layui-nav layui-nav-tree" lay-filter="test">
+    <li class="layui-nav-item layui-nav-itemed">
+        <a href="javascript:;">系统管理</a>
+        <dl class="layui-nav-child">
+            <dd class="my-txt-right"><a href="{:url('/admin/manager/index')}">系统参数配置</a></dd>
+            <dd class="my-txt-right"><a href="{:url('/admin/manager/time')}">选题时间设置</a></dd>
+            <dd class="my-txt-right"><a href="{:url('/admin/specility/index')}">管理专业</a></dd>
+            <dd class="my-txt-right"><a href="{:url('/admin/userm/index')}">管理用户</a></dd>
+            <dd class="my-txt-right"><a href="{:url('/admin/userm/viewtitle')}">查看选题结果</a></dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item layui-nav-itemed">
+        <a href="javascript:;">学生信息管理</a>
+        <dl class="layui-nav-child">
+            <dd class="my-txt-right"><a href="{:url('/admin/stu/index')}">管理学生信息</a></dd>
+            <dd class="my-txt-right"><a href="{:url('/admin/stu/addall')}">导入学生信息</a></dd>
+            <dd class="my-txt-right"><a href="javascript:;"
+                                        onclick="clrspaces('{:url(\'/admin/manager/clrspc\')}');return false;">清除空格</a>
+            </dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item layui-nav-itemed">
+        <a href="javascript:;">题库管理</a>
+        <dl class="layui-nav-child">
+            <dd class="my-txt-right"><a href="{:url('/admin/title/index')}">管理选题</a></dd>
+            <dd class="my-txt-right"><a href="{:url('/admin/title/addall')}">导入选题</a></dd>
+        </dl>
+    </li>
+</ul>
