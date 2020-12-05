@@ -38,9 +38,17 @@
                     <table class="layui-table" id="demo" lay-filter="demo"></table>
 
                     <script type="text/html" id="toolbarDemo">
-                        <div class="layui-btn-container">
-                            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delAllTitle">删除勾选</button>
-                            <button class="layui-btn layui-btn-sm" lay-event="addTitle">添加选题</button>
+                        <div class="layui-btn-container layui-inline">
+                            <button class="layui-btn layui-btn-danger" lay-event="delAllTitle">删除勾选</button>
+                            <button class="layui-btn" lay-event="addTitle">添加选题</button>
+                        </div>
+                        <div class="demoTable layui-inline">
+                            搜索：
+                            <div class="layui-inline">
+                                <input class="layui-input" name="keys" size="58" id="demoReload"
+                                       placeholder="多个关键字，用空格隔开，可同时搜索：题目、导师、手机等">
+                            </div>
+                            <button id="ser" class="layui-btn" data-type="searchreload">搜索</button>
                         </div>
                     </script>
 
@@ -91,7 +99,41 @@
             }
             , limit: "{$datacfg[0]['con_value']}"
             , limits: ["{$datacfg[0]['con_value']}", 100, 300, 500, 1000]
+            , id: 'testReload'
         });
+
+        // 搜索功能 start
+        var active = {
+            searchreload: function () {
+                //执行重载
+                table.reload('testReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    , where: {
+                        keys: {
+                            key: $('#demoReload').val()
+                            , act: 'ser'
+                        }
+                    }
+                }, 'data');
+            }
+        };
+
+        $('body').on('click', '#ser', function () {
+            var keys = $('#demoReload').val();
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+            $('#demoReload').val(keys);
+            $('#demoReload').focus();
+        });
+
+        $('body').keypress(function (event) {
+            if (event.which === 13) {
+                $('#ser').click();
+            }
+        });
+        // 搜索功能 end
 
         //自定义验证规则
         form.verify({

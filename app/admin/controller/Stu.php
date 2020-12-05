@@ -51,6 +51,7 @@ class Stu extends BaseController
         }
 
         $bool = 0;
+        $count = 0;
         $allRecord = explode("\n", $allStu);
         foreach ($allRecord as $item) {
             if (strlen(trim($item)) != 0) {
@@ -64,6 +65,8 @@ class Stu extends BaseController
                     $tf = SinfoModel::create($condition);
                     if ($tf->isEmpty()) {
                         $bool += 1;
+                    } else {
+                        $count += 1;
                     }
                 } else {
                     return show_info(-1, '数据没有按照格式：<br><br>【学号 姓名 专业号】<br><br>的要求输入，不能批量导入！');
@@ -71,9 +74,9 @@ class Stu extends BaseController
             }
         }
         if ($bool == 0)
-            return show_info(0, '学生批量添加成功！', '/admin/stu/addAll');
+            return show_info(0, '学生批量添加成功！共成功：' . $count . ' 条记录！', '/admin/stu/addAll');
         else
-            return show_info(-1, '学生批量添加失败！');
+            return show_info(-1, '学生批量添加失败！共失败：' . $count . ' 条记录！');
     }
 
     /**
@@ -114,32 +117,65 @@ class Stu extends BaseController
         }
     }
 
-    //取得学生信息
+    /**
+     * 取得学生信息
+     * @return false|string
+     */
     public function getStu()
     {
+        if (input('?get.keys.act')) $src = input('get.keys.act');
+        if (input('?get.keys.key')) $key = input('get.keys.key');
+
         if (input('?get.page')) $page = input('get.page');
         if (input('?get.limit')) $limit = input('get.limit');
 
-        $sqlcount = "SELECT count(s_Id) as recodenum"
-            . " FROM selt_sinfo info"
-            . " INNER JOIN selt_specility spec"
-            . " ON info.s_SC=spec.sp_Id";
+        $sqlcount = "SELECT count(s_Id) recodenum"
+            . " FROM selt_sinfo,selt_specility"
+            . " WHERE s_SC=sp_Id";
+
+        $sql = "SELECT info.*,sp_Name"
+            . " FROM selt_sinfo info,selt_specility spec"
+            . " WHERE s_SC=sp_Id"
+            . " ORDER BY s_SC,s_Num"
+            . " limit " . ($page - 1) * $limit . "," . $limit;
+
+        if (isset($src)) {
+            $k = trim($key);
+            if (!empty($k)) {
+                $keywords = explode(' ', $k);
+                $str = '';
+                foreach ($keywords as $value) {
+                    $temp = trim($value);
+                    $str .= "s_Num like '%" . $temp
+                        . "%' OR s_Name like '%" . $temp
+                        . "%' OR sp_Name like '%" . $temp . "%' OR ";
+                }
+                $str = substr($str, 0, -4);
+                $sqlcount = "SELECT count(s_Id) recodenum"
+                    . " FROM selt_sinfo info,selt_specility"
+                    . " WHERE s_SC=sp_Id AND (" . $str . ")";
+
+                $sql = "SELECT info.*,sp_Name"
+                    . " FROM selt_sinfo info,selt_specility"
+                    . " WHERE s_SC=sp_Id AND (" . $str . ")"
+                    . " ORDER BY s_SC,s_Num"
+                    . " limit " . ($page - 1) * $limit . "," . $limit;
+            }
+        }
         $resultcount = Db::query($sqlcount);
         // 总记录数
         $rowNum = $resultcount[0]['recodenum'];
 
-        $sql = "SELECT info.*,spec.sp_Name"
-            . " FROM selt_sinfo info"
-            . " INNER JOIN selt_specility spec"
-            . " ON info.s_SC=spec.sp_Id"
-            . " ORDER BY s_SC,s_Num"
-            . " limit " . ($page - 1) * $limit . "," . $limit;
         // 总数据
         $result = Db::query($sql);
 
         return getLayUITableJson($rowNum, $result);
     }
 
+    /**
+     * 修改学生信息
+     * @return \think\response\Json
+     */
     public function modifyAction()
     {
         if (input('?post.modifysid')) $sid = input('post.modifysid');

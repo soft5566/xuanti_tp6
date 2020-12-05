@@ -57,6 +57,7 @@ class Title extends BaseController
         }
 
         $bool = 0;
+        $count = 0;
         $allRecord = explode("\n", $allTitle);
         foreach ($allRecord as $item) {
             if (strlen(trim($item)) != 0) {
@@ -76,6 +77,8 @@ class Title extends BaseController
                     $tf = CtitleModel::create($condition);
                     if ($tf->isEmpty()) {
                         $bool += 1;
+                    } else {
+                        $count += 1;
                     }
                 } else {
                     return show_info(-1, '数据没有按照格式：'
@@ -101,9 +104,9 @@ class Title extends BaseController
             }
         }
         if ($bool == 0)
-            return show_info(0, '题目批量添加成功！', '/admin/title/addall');
+            return show_info(0, '批量添加成功！共成功：' . $count . ' 条记录！', '/admin/title/addall');
         else
-            return show_info(0, '题目批量添加失败！', '/admin/title/addall');
+            return show_info(-1, '题目批量添加失败！共失败：' . $count . ' 条记录！', '/admin/title/addall');
     }
 
     function insertAction()
@@ -142,27 +145,56 @@ class Title extends BaseController
 
 
     /**
-     * 获取所有选题
+     * 获取选题
      * @return false|string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function getTitle()
     {
+        if (input('?get.keys.act')) $src = input('get.keys.act');
+        if (input('?get.keys.key')) $key = input('get.keys.key');
+
         if (input('?get.page')) $page = input('get.page');
         if (input('?get.limit')) $limit = input('get.limit');
 
         $sqlcount = "SELECT count(c_Id) as recodenum"
             . " FROM selt_ctitle";
-        $resultcount = Db::query($sqlcount);
-        // 总记录数
-        $rowNum = $resultcount[0]['recodenum'];
 
         $sql = "SELECT *"
             . " FROM selt_ctitle"
             . " ORDER BY c_Tutor,c_Title"
             . " limit " . ($page - 1) * $limit . "," . $limit;
+
+        if (isset($src)) {
+            $k = trim($key);
+            if (!empty($k)) {
+                $keywords = explode(' ', $k);
+                $str = '';
+                foreach ($keywords as $value) {
+                    $temp = trim($value);
+                    $str .= "c_Title like '%" . $temp
+                        . "%' OR c_Title like '%" . $temp
+                        . "%' OR c_Tutor like '%" . $temp
+                        . "%' OR c_zhichen like '%" . $temp
+                        . "%' OR c_Phone like '%" . $temp
+                        . "%' OR c_Class like '%" . $temp
+                        . "%' OR c_Design like '%" . $temp . "%' OR ";
+                }
+                $str = substr($str, 0, -4);
+                $sqlcount = "SELECT count(c_Id) as recodenum"
+                    . " FROM selt_ctitle"
+                    . " WHERE " . $str;
+
+                $sql = "SELECT *"
+                    . " FROM selt_ctitle"
+                    . " WHERE " . $str
+                    . " ORDER BY c_Tutor,c_Title"
+                    . " limit " . ($page - 1) * $limit . "," . $limit;
+            }
+        }
+
+        $resultcount = Db::query($sqlcount);
+        // 总记录数
+        $rowNum = $resultcount[0]['recodenum'];
         // 总数据
         $result = Db::query($sql);
 
