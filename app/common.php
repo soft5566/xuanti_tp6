@@ -41,25 +41,6 @@ function getSinfo($data)
 }
 
 /**
- * 将数组转json格式
- * @param $rowNum
- * @param $data
- * @param int $code
- * @param string $msg
- * @return false|string
- */
-function getLayUITableJson($rowNum, $data, $code = 0, $msg = '')
-{
-    $result = array(
-        "code" => $code,
-        "msg" => $msg,
-        "count" => $rowNum,
-        "data" => $data
-    );
-    return json($result);
-}
-
-/**
  * 取时间
  * @return \think\Collection
  * @throws \think\db\exception\DataNotFoundException
@@ -118,4 +99,23 @@ function show_info($code, $info, $url = '')
     $laydata['msg'] = $info;
     $laydata['url'] = $url;
     return json($laydata);
+}
+
+/**
+ * 将数组转json格式，返回给LayUI数据表格显示
+ * @param $rowNum
+ * @param $data
+ * @param int $code
+ * @param string $msg
+ * @return false|string
+ */
+function getLayUITableJson($rowNum, $data, $code = 0, $msg = '')
+{
+    $result = array(
+        "code" => $code,
+        "msg" => $msg,
+        "count" => $rowNum,
+        "data" => $data
+    );
+    return json($result);
 }

@@ -1,8 +1,9 @@
+<?php /*a:3:{s:64:"C:\D\phpstudy_pro\WWW\xuanti_tp6\app\admin\view\title\index.html";i:1607431661;s:63:"C:\D\phpstudy_pro\WWW\xuanti_tp6\app\admin\view\public\top.html";i:1606871536;s:68:"C:\D\phpstudy_pro\WWW\xuanti_tp6\app\admin\view\public\leftMenu.html";i:1607055395;}*/ ?>
 <!DOCTYPE html>
 <html>
 <head lang="zh-CN">
     <meta charset="utf-8">
-    <title>{$datacfg[4]['con_value']}选题系统后台管理页面</title>
+    <title><?php echo htmlentities($datacfg[4]['con_value']); ?>选题系统后台管理页面</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -17,13 +18,53 @@
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <!-- 头部区域（可配合layui已有的水平导航） -->
-        {include file="public/top" /}
+        <div class="layui-logo" style="margin-left: 118px; font-size: 18px; text-align: left; width: 600px;">
+    <?php echo htmlentities($datacfg[4]['con_value']); ?>选题系统后台管理页面
+</div>
+<ul class="layui-nav layui-layout-right">
+    <li class="layui-nav-item">
+        <a href="javascript:;">
+            <img src="/static/images/admin.jpg" class="layui-nav-img">
+            <?php echo session('uloginName'); ?>
+        </a>
+    </li>
+    <li class="layui-nav-item"><a id="logout" href="javascript:void(0);"
+                                  onclick="logout('<?php echo url('/admin/manager/logout'); ?>');return false;">退了</a></li>
+</ul>
     </div>
 
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            {include file="public/leftMenu" /}
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+    <li class="layui-nav-item layui-nav-itemed">
+        <a href="javascript:;">系统管理</a>
+        <dl class="layui-nav-child">
+            <dd class="my-txt-right"><a href="<?php echo url('/admin/manager/index'); ?>">系统参数配置</a></dd>
+            <dd class="my-txt-right"><a href="<?php echo url('/admin/manager/time'); ?>">选题时间设置</a></dd>
+            <dd class="my-txt-right"><a href="<?php echo url('/admin/specility/index'); ?>">管理专业</a></dd>
+            <dd class="my-txt-right"><a href="<?php echo url('/admin/userm/index'); ?>">管理用户</a></dd>
+            <dd class="my-txt-right"><a href="<?php echo url('/admin/userm/viewtitle'); ?>">查看选题结果</a></dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item layui-nav-itemed">
+        <a href="javascript:;">学生信息管理</a>
+        <dl class="layui-nav-child">
+            <dd class="my-txt-right"><a href="<?php echo url('/admin/stu/index'); ?>">管理学生信息</a></dd>
+            <dd class="my-txt-right"><a href="<?php echo url('/admin/stu/addall'); ?>">导入学生信息</a></dd>
+            <dd class="my-txt-right"><a href="javascript:;"
+                                        onclick="clrspaces('<?php echo url('/admin/manager/clrspc'); ?>');return false;">清除空格</a>
+            </dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item layui-nav-itemed">
+        <a href="javascript:;">题库管理</a>
+        <dl class="layui-nav-child">
+            <dd class="my-txt-right"><a href="<?php echo url('/admin/title/index'); ?>">管理选题</a></dd>
+            <dd class="my-txt-right"><a href="<?php echo url('/admin/title/addall'); ?>">导入选题</a></dd>
+        </dl>
+    </li>
+</ul>
         </div>
     </div>
 
@@ -72,7 +113,7 @@
         //表格渲染
         table.render({
             elem: '#demo'
-            , url: '{:url("/admin/Title/getTitle")}'
+            , url: '<?php echo url("/admin/Title/getTitle"); ?>'
             , toolbar: '#toolbarDemo'
             , cols: [[
                 {type: 'checkbox'}
@@ -97,8 +138,8 @@
                 , next: '下一页'
                 , last: '尾页'
             }
-            , limit: "{$datacfg[0]['con_value']}"
-            , limits: ["{$datacfg[0]['con_value']}", 100, 300, 500, 1000]
+            , limit: "<?php echo htmlentities($datacfg[0]['con_value']); ?>"
+            , limits: ["<?php echo htmlentities($datacfg[0]['con_value']); ?>", 100, 300, 500, 1000]
             , id: 'testReload'
         });
 
@@ -167,7 +208,7 @@
                                 }
                                 id_str = id_str.substr(0, id_str.length - 1);
                                 //向服务端发送删除指令
-                                ajax_push("{:url('/admin/Title/delete')}", {
+                                ajax_push("<?php echo url('/admin/Title/delete'); ?>", {
                                     'arrayid': id_str,
                                     'dt': new Date().getTime()
                                 }, index)
@@ -185,7 +226,7 @@
                         , success: function (layero, index) {
                             // 监听添加专业表单提交
                             form.on('submit(addsub)', function (data) {
-                                ajax_push("{:url('/admin/title/insertAction')}", data.field, index);
+                                ajax_push("<?php echo url('/admin/title/insertAction'); ?>", data.field, index);
                             });
                         }
                     });
@@ -202,7 +243,7 @@
                     , title: '删除'
                     , yes: function (index) {
                         //向服务端发送删除指令
-                        ajax_push('{:url("/admin/title/delete")}', {'cid': data.c_Id}, index, obj, 'GET');
+                        ajax_push('<?php echo url("/admin/title/delete"); ?>', {'cid': data.c_Id}, index, obj, 'GET');
                     }
                 });
             } else if (obj.event === 'modify') {
@@ -228,7 +269,7 @@
                         form.render();
                         // 监听添加专业表单提交
                         form.on('submit(modifysub)', function (d) {
-                            ajax_push("{:url('/admin/title/modifyAction')}", d.field, index);
+                            ajax_push("<?php echo url('/admin/title/modifyAction'); ?>", d.field, index);
                         });
                     }
                 });
@@ -247,7 +288,7 @@
 
                     <div class="layui-input-block">
                         <input type="text" name="titleid" title="题号自动生成！"
-                               lay-verify="required" value="{$cnumMax}"
+                               lay-verify="required" value="<?php echo htmlentities($cnumMax); ?>"
                                class="layui-input" id="titleid" readonly
                                placeholder="题号自动生成">
                     </div>
@@ -328,9 +369,9 @@
                     <div class="layui-input-block">
                         <select name="cclass" id="cclass" lay-verify="required">
                             <option value="">请选择题目方向</option>
-                            {volist name="spclass" id="vo"}
-                            <option value="{$vo.sp_Classes}">{$vo.sp_Classes}</option>
-                            {/volist}
+                            <?php if(is_array($spclass) || $spclass instanceof \think\Collection || $spclass instanceof \think\Paginator): $i = 0; $__LIST__ = $spclass;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?>
+                            <option value="<?php echo htmlentities($vo['sp_Classes']); ?>"><?php echo htmlentities($vo['sp_Classes']); ?></option>
+                            <?php endforeach; endif; else: echo "" ;endif; ?>
                         </select>
                     </div>
                 </div>
@@ -454,9 +495,9 @@
                     <div class="layui-input-block">
                         <select name="modifycclass" id="modifycclass" lay-verify="required">
                             <option value="">请选择专业类别</option>
-                            {volist name="spclass" id="vo"}
-                            <option value="{$vo.sp_Classes}">{$vo.sp_Classes}</option>
-                            {/volist}
+                            <?php if(is_array($spclass) || $spclass instanceof \think\Collection || $spclass instanceof \think\Paginator): $i = 0; $__LIST__ = $spclass;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?>
+                            <option value="<?php echo htmlentities($vo['sp_Classes']); ?>"><?php echo htmlentities($vo['sp_Classes']); ?></option>
+                            <?php endforeach; endif; else: echo "" ;endif; ?>
                         </select>
                     </div>
                 </div>
@@ -469,9 +510,9 @@
 
                     <div class="layui-input-block">
                         <select id="modifycpeople" name="modifycpeople" class="form-control">
-                            {for start="1" end="6"}
-                            <option value="{$i}">{$i}</option>
-                            {/for}
+                            <?php $__FOR_START_619279695__=1;$__FOR_END_619279695__=6;for($i=$__FOR_START_619279695__;$i < $__FOR_END_619279695__;$i+=1){ ?>
+                            <option value="<?php echo htmlentities($i); ?>"><?php echo htmlentities($i); ?></option>
+                            <?php } ?>
                         </select>
                     </div>
                 </div>
@@ -484,9 +525,9 @@
 
                     <div class="layui-input-block">
                         <select id="modifycleft" name="modifycleft" class="form-control">
-                            {for start="1" end="6"}
-                            <option value="{$i}">{$i}</option>
-                            {/for}
+                            <?php $__FOR_START_1864419109__=1;$__FOR_END_1864419109__=6;for($i=$__FOR_START_1864419109__;$i < $__FOR_END_1864419109__;$i+=1){ ?>
+                            <option value="<?php echo htmlentities($i); ?>"><?php echo htmlentities($i); ?></option>
+                            <?php } ?>
                         </select>
                     </div>
                 </div>
